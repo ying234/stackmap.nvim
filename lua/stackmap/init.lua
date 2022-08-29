@@ -61,9 +61,9 @@ M.pop = function(name, mode)
 	for lhs in pairs(state.mappings) do
 		if state.existing[lhs] then
 			vim.keymap.set(mode, lhs, state.existing[lhs].rhs)
+		else
+			vim.keymap.del(mode, lhs)
 		end
-
-		vim.keymap.del(mode, lhs)
 	end
 end
 
