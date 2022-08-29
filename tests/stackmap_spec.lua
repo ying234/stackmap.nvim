@@ -1,21 +1,27 @@
-require("plenary.test_harness")
-describe("some basics", function()
-	local bello = function(boo)
-		return "bello " .. boo
+describe("stackmap", function()
+	before_each(function()
+		require("stackmap").clear()
+		--  Make sure not this key mapping when we start
+		pcall(vim.keymap.del, "n", "asdfasdf")
+	end)
+
+	it("can be required", function()
+		require("stackmap")
+	end)
+
+	local find_mapping = function(lhs, rhs)
+		local maps = vim.api.nvim_get_keymap("n")
+		for _, value in ipairs(maps) do
+			if value.lhs == lhs and value.rhs == rhs then
+				return true
+			end
+		end
+		return false
 	end
 
-	local bounter
-
-	before_each(function()
-		bounter = 0
-	end)
-
-	it("some test", function()
-		bounter = 100
-		assert.equals("bello Brian", bello("Brian"))
-	end)
-
-	it("some other test", function()
-		assert.equals(0, bounter)
+	it("push map works", function()
+		require("stackmap").push("hello", "n", { ["asdfasdf"] = "abc" })
+		local exist = find_mapping("asdfasdf", "abc")
+		assert(exist, true)
 	end)
 end)
